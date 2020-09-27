@@ -18,10 +18,6 @@ SoftwareSerial hpmSerial(UART_TX, UART_RX);
 // A "standard" and a "compact". They return different auto-read data messages.
 HPMA115_Compact hpm = HPMA115_Compact();
 
-// A variable for storing readings from the sensor.
-// This will be updated automatically after we pass it to begin().
-compact_auto_result_t data;
-
 // Result of attempt to read data from the sensor.
 uint8_t err = 0;
 
@@ -29,25 +25,24 @@ void setup() {
   Serial.begin(HPMA115_BAUD);
   hpmSerial.begin(HPMA115_BAUD);
 
-  // Configure the HPM device to use our data stream and our mutable data
-  // reading object. Readings will be sent automatically. All we need to
-  // do is check for receivedData() (below) every second.
-  hpm.begin(&hpmSerial, &data);
+  // Configure the HPM device to use our data stream.
+  // (Note carefully the '&' in the next line.)
+  hpm.begin(&hpmSerial);
 }
 
 void loop() {
   if (hpm.checkAutoReceive() == NEW_DATA) {
     // No error, so the data was updated automatically for us. Yay.
     Serial.print("AQI ");
-    Serial.print(data.aqi);
+    Serial.print(hpm.getAQI());
     Serial.print("  PM 1.0 = ");
-    Serial.print(data.pm1);
+    Serial.print(hpm.getPM1());
     Serial.print(", PM 2.5 = ");
-    Serial.print(data.pm25);
+    Serial.print(hpm.getPM25());
     Serial.print(", PM 4.0 = ");
-    Serial.print(data.pm4);
+    Serial.print(hpm.getPM4());
     Serial.print(", PM 10.0 = ");
-    Serial.println(data.pm10);
+    Serial.println(hpm.getPM10());
   }
 
   // The sensor only sends readings at intervals of one second.

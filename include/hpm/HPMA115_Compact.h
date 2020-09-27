@@ -59,23 +59,43 @@ class HPMA115_Compact {
   HPMA115_Compact();
 
   /*
-   * Configure the instance to use this stream to communicate with the STM
-   * UART, and this data object to update with new readings.
+   * Configure the instance to use this stream to communicate with the STM.
    */
-  bool begin(Stream *stream, compact_auto_result_t *data);
+  bool begin(Stream *stream);
 
   /*
-   * Check for data received. Update values in the result_data object
-   * if data was successfully read. Return status code.
+   * Check for data received. Return status code.
+   *
+   * If this returns NEW_DATA, then you can access the new data by calling
+   * the getPM25() or  getAQI(), etc.
    */
   compact_auto_status_t checkAutoReceive();
+
+  /* Get the most recent PM 1.0 reading. */
+  uint16_t getPM1();
+
+  /* Get the most recent PM 2.5 reading. */
+  uint16_t getPM25();
+
+  /* Get the most recent PM 4.0 reading. */
+  uint16_t getPM4();
+
+  /* Get the most recent PM 10.0 reading. */
+  uint16_t getPM10();
+
+  /*
+   * Get the most recent AQI reading.
+   *
+   * Based on the higher of the PM 2.5 and PM 10.0 readings.
+   */
+  uint16_t getAQI();
 
  private:
   /* The stream connected to the STM UART. */
   Stream *hpma = NULL;
 
-  /* The object we should update with new auto-send readings. */
-  compact_auto_result_t *result_data = NULL;
+  /* Latest readings. */
+  compact_auto_result_t result_data = { 0xFF };
 };
 
 #endif  // INCLUDE_HPM_HPMA115_COMPACT_H_
