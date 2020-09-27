@@ -2,6 +2,7 @@
 #define SRC_HPMA_H_
 
 #include <stdint.h>
+#include <Stream.h>
 
 #define HPMA115_BAUD 9600
 
@@ -24,28 +25,10 @@ enum header {
   ACK         = 0xA5,  // Positive ACK. Repeated.
 };
 
-/*
- * Byte sequence for the autosend data format from the compact series,
- * HPMA115C0-003 and HPMA115C0-004. (Table 7 in the Honeywell data sheet.)
- */
-typedef enum {
-  HEAD_0,
-  HEAD_1,
-  LEN_H,
-  LEN_L,
-  DATA0_H,
-  DATA0_L,
-  DATA1_H,
-  DATA1_L,
-  DATA2_H,
-  DATA2_L,
-  DATA3_H,
-  DATA3_L,
-  DATA_RESERVED,
-  CS_H,
-  CS_L,
-  UNKNOWN,
-} compact_autosend_state_t;
+enum {
+  AUTO_HEAD_0 = 0x42,  // First byte of auto-send data header.
+  AUTO_HEAD_1 = 0x4D,  // Second byte of auto-send data header.
+};
 
 #endif  // SRC_HPMA_H_
 
