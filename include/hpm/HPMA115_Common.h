@@ -2,7 +2,6 @@
 #define SRC_HPMA_H_
 
 #include <stdint.h>
-#include <Stream.h>
 
 #define HPMA115_BAUD 9600
 

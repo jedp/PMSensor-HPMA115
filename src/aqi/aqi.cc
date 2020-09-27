@@ -1,4 +1,4 @@
-#include "aqi.h"
+#include "aqi/aqi.h"
 
 /* Lower and upper bounds for AQI categories. */
 #define GOOD_LO 0

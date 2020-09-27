@@ -1,6 +1,13 @@
 #ifndef SRC_HPMA_COMPACT_H_
 #define SRC_HPMA_COMPACT_H_
 
+#ifdef UNIT_TEST
+#include "fake/FakeStream.h"
+#else
+#include <Stream.h>
+#endif
+
+#include <stddef.h>
 #include "HPMA115_Common.h"
 
 /*

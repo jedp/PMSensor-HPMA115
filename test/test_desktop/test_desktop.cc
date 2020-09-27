@@ -1,6 +1,6 @@
 #include <unity.h>
 
-#include "aqi.h"
+#include "aqi/aqi.h"
 
 void test_pm25_aqi(void) {
   // "Good"

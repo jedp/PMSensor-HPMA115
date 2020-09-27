@@ -1,5 +1,5 @@
-#include "HPMA115_Compact.h"
-#include "aqi.h"
+#include "hpm/HPMA115_Compact.h"
+#include "aqi/aqi.h"
 
 HPMA115_Compact::HPMA115_Compact() {
 }
