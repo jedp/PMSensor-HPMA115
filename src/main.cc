@@ -36,7 +36,7 @@ void setup() {
 }
 
 void loop() {
-  if(hpm.checkAutoReceive() == NEW_DATA) {
+  if (hpm.checkAutoReceive() == NEW_DATA) {
     // No error, so the data was updated automatically for us. Yay.
     Serial.print("AQI ");
     Serial.print(data.aqi);

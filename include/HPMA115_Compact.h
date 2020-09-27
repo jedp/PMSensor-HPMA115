@@ -21,7 +21,8 @@ typedef enum {
   DATA3_H,
   DATA3_L,
   CS_H = 28,
-  CS_L = 29,
+  CS_L,
+  AUTO_SEND_DATA_BYTES,
 } compact_autosend_state_t;
 
 /*
@@ -33,6 +34,7 @@ typedef struct {
   uint16_t pm4;
   uint16_t pm10;
   uint16_t aqi;
+  uint16_t checksum;
 } compact_auto_result_t;
 
 typedef enum {
@@ -43,7 +45,7 @@ typedef enum {
   INSUFFICIENT_DATA,
   BAD_CHECKSUM,
   DEVICE_UNAVAILABLE = 255
-} compact_result_error_t;
+} compact_auto_status_t;
 
 class HPMA115_Compact {
 
@@ -58,9 +60,9 @@ class HPMA115_Compact {
 
     /*
      * Check for data received. Update values in the result_data object
-     * if data was successfully read. Return error code.
+     * if data was successfully read. Return status code.
      */
-    compact_result_error_t checkAutoReceive();
+    compact_auto_status_t checkAutoReceive();
 
   private:
     /* Auto-send is enabled. (Assume true; this is the device default.) */
