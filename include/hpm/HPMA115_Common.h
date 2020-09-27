@@ -1,5 +1,5 @@
-#ifndef SRC_HPMA_H_
-#define SRC_HPMA_H_
+#ifndef INCLUDE_HPM_HPMA115_COMMON_H_
+#define INCLUDE_HPM_HPMA115_COMMON_H_
 
 #include <stdint.h>
 
@@ -29,5 +29,5 @@ enum {
   AUTO_HEAD_1 = 0x4D,  // Second byte of auto-send data header.
 };
 
-#endif  // SRC_HPMA_H_
+#endif  // INCLUDE_HPM_HPMA115_COMMON_H_
 

@@ -39,7 +39,7 @@ install:
   - platformio update
 
 script:
-  - cpplint src/*
+  - cpplint --recursive src/* include/* test/*
   - platformio test -e native
 
 notifications:

@@ -1,5 +1,5 @@
-#ifndef SRC_HPMA_COMPACT_H_
-#define SRC_HPMA_COMPACT_H_
+#ifndef INCLUDE_HPM_HPMA115_COMPACT_H_
+#define INCLUDE_HPM_HPMA115_COMPACT_H_
 
 #ifdef UNIT_TEST
 #include "fake/FakeStream.h"
@@ -55,32 +55,28 @@ typedef enum {
 } compact_auto_status_t;
 
 class HPMA115_Compact {
+ public:
+  HPMA115_Compact();
 
-  public:
-    HPMA115_Compact();
+  /*
+   * Configure the instance to use this stream to communicate with the STM
+   * UART, and this data object to update with new readings.
+   */
+  bool begin(Stream *stream, compact_auto_result_t *data);
 
-    /*
-     * Configure the instance to use this stream to communicate with the STM
-     * UART, and this data object to update with new readings.
-     */
-    bool begin(Stream *stream, compact_auto_result_t *data);
+  /*
+   * Check for data received. Update values in the result_data object
+   * if data was successfully read. Return status code.
+   */
+  compact_auto_status_t checkAutoReceive();
 
-    /*
-     * Check for data received. Update values in the result_data object
-     * if data was successfully read. Return status code.
-     */
-    compact_auto_status_t checkAutoReceive();
+ private:
+  /* The stream connected to the STM UART. */
+  Stream *hpma = NULL;
 
-  private:
-    /* Auto-send is enabled. (Assume true; this is the device default.) */
-    bool autosend = true;
-
-    /* The stream connected to the STM UART. */
-    Stream *hpma = NULL;
-
-    /* The object we should update with new auto-send readings. */
-    compact_auto_result_t *result_data = NULL;
+  /* The object we should update with new auto-send readings. */
+  compact_auto_result_t *result_data = NULL;
 };
 
-#endif
+#endif  // INCLUDE_HPM_HPMA115_COMPACT_H_
 
