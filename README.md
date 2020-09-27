@@ -1,7 +1,7 @@
 # Honeywell HPMA115 series Particulate Matter Sensors
 
 Library and example for receiving data from and interacting with Honeywell HPM
-series particulate matter sensors.
+series particulate matter sensors using the Arduino platform.
 
 Includes calculation of AQI (air quality index).
 
@@ -13,7 +13,7 @@ console.
 Here are the guts of an example Arduino sketch to receive data from the HPMA115
 Compact sensor:
 
-```
+```C++
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <HPMA115_Compact.h>
@@ -58,7 +58,13 @@ void loop() {
 
 Consult Table 3 of the datasheet for the [HPM Sensors].
 
-## Build and upload
+## Platform.IO Commands
+
+This project was configured for [Platform.IO](https://platformio.org/). If you
+are coming to this from the Arduino programming tool, no problem. Just ignore
+this part.
+
+### Build and upload
 
 Using one of the platforms specified in the `platformio.ini` file, run, e.g.,
 
@@ -66,7 +72,11 @@ Using one of the platforms specified in the `platformio.ini` file, run, e.g.,
 pio run -e nucleo_f303k8 --target upload
 ```
 
-## Printing AQI to the console
+### Printing AQI to the console
+
+(If you are using the Arduino editor, and not PIO command-line tools, just open
+the serial window in the Arduio editor, set Baud to 9600, and you should be
+able to see the same output.)
 
 ```
 pio run -e nucleo_f303k8 --target upload
@@ -82,7 +92,7 @@ AQI 29  PM 1.0 = 5, PM 2.5 = 7, PM 4.0 = 10, PM 10.0 = 11
 ...
 ```
 
-## Testing
+### Testing
 
 Run unit tests with:
 
