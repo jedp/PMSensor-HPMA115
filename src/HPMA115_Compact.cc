@@ -1,8 +1,7 @@
 #include "HPMA115_Compact.h"
 #include "aqi.h"
 
-HPMA115_Compact::HPMA115_Compact()
-{
+HPMA115_Compact::HPMA115_Compact() {
 }
 
 bool HPMA115_Compact::begin(Stream *stream, compact_auto_result_t *data) {

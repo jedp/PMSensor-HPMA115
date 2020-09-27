@@ -5,8 +5,8 @@
 #include <HPMA115_Compact.h>
 
 // Uncomment and/or change for Arduino uno
-//#define UART_TX 2
-//#define UART_RX 3
+// #define UART_TX 2
+// #define UART_RX 3
 // Uncomment and/or change for STM32 Nucleo
 #define UART_TX PB4
 #define UART_RX PB3

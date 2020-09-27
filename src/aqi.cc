@@ -61,6 +61,9 @@ uint32_t _aqi(
     uint16_t bp_lo
 ) {
   // Do division in float space to retain accuracy.
-  return (uint32_t) (((float) (i_hi - i_lo) / (bp_hi - bp_lo)) * (c_p - bp_lo) + i_lo);
+  return static_cast<uint32_t> (
+      (static_cast<float> (i_hi - i_lo) / (bp_hi - bp_lo))
+      * (c_p - bp_lo)
+      + i_lo);
 }
 
