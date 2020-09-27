@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jedp/PMSensor-HPMA115.svg?branch=master)](https://travis-ci.org/jedp/PMSensor-HPMA115)
+
 # Honeywell HPMA115 series Particulate Matter Sensors
 
 Library and example for receiving data from and interacting with Honeywell HPM
