@@ -105,3 +105,9 @@ Run unit tests with:
 
 - Finish implementing the API (synchronous commands)
 - Support for non-compact HPM "Standard"
+
+## About
+
+Written by Jed Parsons. Distributed under the BSD license. Read `license.txt`
+for details. All text above must be included in any redistribution.
+
