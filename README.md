@@ -7,6 +7,18 @@ series particulate matter sensors using the Arduino platform.
 
 Includes calculation of AQI (air quality index).
 
+tl;dr:
+
+```
+HPMA115_Compact hpm = HPMA115_Compact();
+hpm.begin(&serial);
+
+if (hpm.checkAutoReceive() == NEW_DATA) {
+  // use hpm.getPM25(), hpm.getAQI(), etc.
+}
+
+```
+
 ## Usage
 
 See `main.cc` for a working example that streams AQI data over your serial
@@ -27,26 +39,23 @@ SoftwareSerial hpmSerial(2, 3);
 // Create an object to communicate with the HPM Compact sensor.
 HPMA115_Compact hpm = HPMA115_Compact();
 
-// Create an object to store the result data that the sensor will fill.
-compact_auto_result_t data;
-
 void setup() {
   // Console serial.
   Serial.begin(HPMA115_BAUD);
   // Serial for ineracting with HPM device.
   hpmSerial.begin(HPMA115_BAUD);
 
-  // Configure the hpm object to refernce this serial stream and data object.
-  // Note carefully the '&' characters in this line.
-  hpm.begin(&hpmSerial, &data);
+  // Configure the hpm object to refernce this serial stream.
+  // Note carefully the '&' in this line.
+  hpm.begin(&hpmSerial);
 }
 
 void loop() {
   if (hpm.receive() == NEW_DATA) {
     Serial.print("AQI: ");
-    Serial.print(data.aqi);
+    Serial.print(hpm.getAQI());
     Serial.print("  PM 2.5 = ");
-    Serial.print(data.aqi25);
+    Serial.print(hpm.getPM25());
     // etc.
     Serial.println();
   }
