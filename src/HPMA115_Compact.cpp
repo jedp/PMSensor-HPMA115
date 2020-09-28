@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "hpm/HPMA115_Compact.h"
+#include "HPMA115_Compact.h"
 #include "aqi/aqi.h"
 
 HPMA115_Compact::HPMA115_Compact() {
@@ -31,27 +31,27 @@ uint16_t HPMA115_Compact::getAQI() {
   return result_data.aqi;
 }
 
-compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
+bool HPMA115_Compact::isNewDataAvailable() {
   if (!hpma) {
-    return DEVICE_UNAVAILABLE;
+    return false;
   }
 
   if (hpma->available() < 1) {
-    return NO_DATA;
+    return false;
   }
 
   if (hpma->read() != AUTO_HEAD_0) {
     // Not at the head of a protocol block. Skip to next byte.
-    return NOT_HEAD0_RETRY;
+    return false;
   }
 
   if (hpma->read() != AUTO_HEAD_1) {
     // That last byte was not in fact the start of the header.
-    return NOT_HEAD1_RETRY;
+    return false;
   }
 
   if (hpma->available() < 30) {
-    return INSUFFICIENT_DATA;
+    return false;
   }
 
   // We've already consumed the header bytes, so 30 remain in the message.
@@ -67,7 +67,7 @@ compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
   }
 
   if (actual_sum != expected_sum) {
-    return BAD_CHECKSUM;
+    return false;
   }
 
   // Everything's great. We can report the readings.
@@ -83,7 +83,7 @@ compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
   // The worse pollutant determines the AQI. Because the EPA said so.
   result_data.aqi = (aqi25 > aqi10) ? aqi25 : aqi10;
 
-  return NEW_DATA;
+  return true;
 }
 
 bool HPMA115_Compact::readParticleMeasurementResults() {

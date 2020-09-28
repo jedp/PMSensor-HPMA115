@@ -1,5 +1,5 @@
-#ifndef INCLUDE_AQI_AQI_H_
-#define INCLUDE_AQI_AQI_H_
+#ifndef SRC_AQI_AQI_H_
+#define SRC_AQI_AQI_H_
 
 #include <stdint.h>
 
@@ -9,5 +9,5 @@ uint32_t aqi_pm25(uint16_t c_pm25);
 /* Return the AQI according to the PM10 count. */
 uint32_t aqi_pm10(uint16_t c_pm10);
 
-#endif  // INCLUDE_AQI_AQI_H_
+#endif  // SRC_AQI_AQI_H_
 

@@ -1,5 +1,5 @@
-#ifndef INCLUDE_HPM_HPMA115_COMMON_H_
-#define INCLUDE_HPM_HPMA115_COMMON_H_
+#ifndef SRC_HPM_HPMA115_COMMON_H_
+#define SRC_HPM_HPMA115_COMMON_H_
 
 #include <stdint.h>
 
@@ -11,5 +11,5 @@ enum {
   CMD_HEAD    = 0x68,  // Header byte of a command.
 };
 
-#endif  // INCLUDE_HPM_HPMA115_COMMON_H_
+#endif  // SRC_HPM_HPMA115_COMMON_H_
 

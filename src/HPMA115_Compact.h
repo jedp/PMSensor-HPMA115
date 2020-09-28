@@ -1,5 +1,5 @@
-#ifndef INCLUDE_HPM_HPMA115_COMPACT_H_
-#define INCLUDE_HPM_HPMA115_COMPACT_H_
+#ifndef SRC_HPMA115_COMPACT_H_
+#define SRC_HPMA115_COMPACT_H_
 
 #ifdef UNIT_TEST
 #include "fake/FakeStream.h"
@@ -8,7 +8,7 @@
 #endif
 
 #include <stddef.h>
-#include "HPMA115_Common.h"
+#include "hpm/HPMA115_Common.h"
 
 /*
  * Byte sequence for the autosend data format from the compact series,
@@ -44,16 +44,6 @@ typedef struct {
   uint16_t checksum;
 } compact_auto_result_t;
 
-typedef enum {
-  NEW_DATA = 0,
-  NO_DATA,
-  NOT_HEAD0_RETRY,
-  NOT_HEAD1_RETRY,
-  INSUFFICIENT_DATA,
-  BAD_CHECKSUM,
-  DEVICE_UNAVAILABLE = 255
-} compact_auto_status_t;
-
 class HPMA115_Compact {
  public:
   HPMA115_Compact();
@@ -64,16 +54,17 @@ class HPMA115_Compact {
   bool begin(Stream *stream);
 
   /*
-   * Check for data received. Return status code.
+   * Check for data received. Return true if new data has arrived, false
+   * otherwise.
    *
    * When it powers on, the HPM automatically starts collecting measurements
    * and sending them every second (auto send). Calling this command every
    * second will let you capture that stream of readings.
    *
-   * If this returns NEW_DATA, then you can access the new data by calling
+   * If this returns true, then you can access the new data by calling
    * the getPM25() or  getAQI(), etc.
    */
-  compact_auto_status_t checkAutoReceive();
+  bool isNewDataAvailable();
 
   /*
    * Read the current measurement from the HPM.
@@ -82,7 +73,7 @@ class HPMA115_Compact {
    * result data.
    *
    * As an alternative to requesting data this way, you can leave the device
-   * in auto-send mode, and call checkAutoReceive() every second.
+   * in auto-send mode, and call isNewDataAvailable() every second.
    */
   bool readParticleMeasurementResults();
 
@@ -158,5 +149,5 @@ class HPMA115_Compact {
   bool writeSimpleCommand(uint8_t cmdByte);
 };
 
-#endif  // INCLUDE_HPM_HPMA115_COMPACT_H_
+#endif  // SRC_HPMA115_COMPACT_H_
 

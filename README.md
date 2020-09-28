@@ -13,7 +13,7 @@ tl;dr:
 HPMA115_Compact hpm = HPMA115_Compact();
 hpm.begin(&serial);
 
-if (hpm.checkAutoReceive() == NEW_DATA) {
+if (hpm.isNewDataAvailable()) {
   // use hpm.getPM25(), hpm.getAQI(), etc.
 }
 
@@ -21,11 +21,11 @@ if (hpm.checkAutoReceive() == NEW_DATA) {
 
 ## Commands
 
-- `checkAutoReceive()` Poll for new sensor data. Do this no more than once per
-  second.
+- `isNewDataAvailable()` Poll for new sensor data. Do this no more than once
+  per second.
 
 - `readParticleMeasurementResults()` Read the current sensor results. This
-  is an alternative to using auto-send and polling with `checkAutoReceive()`.
+  is an alternative to using auto-send and polling with `isNewDataAvailable()`.
 
 - `getAQI()` Get the current Air Quality Index value.
 
@@ -52,8 +52,9 @@ sending them every second.
 
 ## Examples
 
-See `main.cc` for a working example that streams AQI data over your serial
-console.
+You can open the sketches in `examples` directly in your Arduino IDE.
+
+If you are using Platform.IO, look for `main.cc` in the `src` dir.
 
 Here are the guts of two example Arduino sketches to read data from
 the HPMA115 Compact sensor. The first waits for the sensor to send data
@@ -87,7 +88,7 @@ void setup() {
 // In the loop, we can just poll for new data since the device automatically
 // enters auto-send mode on startup.
 void loop() {
-  if (hpm.checkAutoReceive() == NEW_DATA) {
+  if (hpm.isNewDataAvailable()) {
     Serial.print("AQI: ");
     Serial.print(hpm.getAQI());
     Serial.print("  PM 2.5 = ");
@@ -121,7 +122,7 @@ void setup() {
   hpm.begin(&hpmSerial);
 
   // One way to wait for the device to be ready.
-  while(hpm.checkAutoReceive() != NEW_DATA) {}
+  while(!hpm.isNewDataAvailable()) {}
 
   hpm.stopAutoSend();
 }
@@ -147,9 +148,10 @@ Consult Table 3 of the datasheet for the [HPM Sensors].
 
 ## Platform.IO Commands
 
-This project was configured for [Platform.IO](https://platformio.org/). If you
-are coming to this from the Arduino programming tool, no problem. Just ignore
-this part.
+This project is structured to conform to the Arduino library structure, but it
+is developed using [Platform.IO](https://platformio.org/).
+
+If you are not using Platform.IO, ignore this part.
 
 ### Build and upload
 
