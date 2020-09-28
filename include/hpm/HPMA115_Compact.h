@@ -76,6 +76,17 @@ class HPMA115_Compact {
   compact_auto_status_t checkAutoReceive();
 
   /*
+   * Read the current measurement from the HPM.
+   *
+   * Blocks until the HPM responds either with an error code, or with the
+   * result data.
+   *
+   * As an alternative to requesting data this way, you can leave the device
+   * in auto-send mode, and call checkAutoReceive() every second.
+   */
+  bool readParticleMeasurementResults();
+
+  /*
    * Tell the HPM to stop collecting measurements. This will also cause the
    * HPM fan to stop.
    *
