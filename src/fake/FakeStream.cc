@@ -33,6 +33,25 @@ void Stream::write(uint8_t from[], uint8_t len) {
     if (rx_buf[rx_idx++] == 0x01) {
       uint8_t cmd = rx_buf[rx_idx++];
 
+      // Read particle measurement results
+      if (cmd == 0x04) {
+        // Checksum. See datasheet, Table 6, for expected values.
+        if (rx_buf[rx_idx++] != 0x93) {
+          add(0x96); add(0x96);
+          return;
+        } else {
+          // Return example reading from data sheet.
+          add(0x40); add(0x0D); add(0x04);              // Headers
+          add(0x00); add(0x30);                         // PM 1
+          add(0x00); add(0x31);                         // PM 2.5
+          add(0x00); add(0x32);                         // PM 4
+          add(0x00); add(0x33);                         // PM 10
+          add(0x00); add(0x00); add(0x00); add(0x00);   // Reserved
+          add(0xE9);                                    // Checksum
+          return;
+        }
+      }
+
       // Stop measurement
       if (cmd == 0x02) {
         // Checksum. See datasheet, Table 6, for expected values.

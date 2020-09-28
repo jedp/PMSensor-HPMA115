@@ -21,6 +21,9 @@ HPMA115_Compact hpm = HPMA115_Compact();
 // Result of attempt to read data from the sensor.
 uint8_t err = 0;
 
+// Helper function to print current measurement results.
+void printResults();
+
 void setup() {
   Serial.begin(HPMA115_BAUD);
   hpmSerial.begin(HPMA115_BAUD);
@@ -30,26 +33,47 @@ void setup() {
   hpm.begin(&hpmSerial);
 
   delay(1000);
+
+  // When the device powers up, it goes directly into auto-send mode.
+  while (hpm.checkAutoReceive() != NEW_DATA) {}
+
+  // We can disable auto-send if we want.
+  hpm.stopAutoSend();
+
+  // And we can fetch readings manually.
+  hpm.readParticleMeasurementResults();
+
+  Serial.println("Manually fetching result:");
+  printResults();
+
+  // Let's set this back to audo-send. We'll catch the readings in the loop().
+  hpm.startAutoSend();
+
+  Serial.println("Looping ...");
 }
 
 void loop() {
   if (hpm.checkAutoReceive() == NEW_DATA) {
     // No error, so the data was updated automatically for us. Yay.
-    Serial.print("AQI ");
-    Serial.print(hpm.getAQI());
-    Serial.print("  PM 1.0 = ");
-    Serial.print(hpm.getPM1());
-    Serial.print(", PM 2.5 = ");
-    Serial.print(hpm.getPM25());
-    Serial.print(", PM 4.0 = ");
-    Serial.print(hpm.getPM4());
-    Serial.print(", PM 10.0 = ");
-    Serial.println(hpm.getPM10());
+    printResults();
   }
 
   // The sensor only sends readings at intervals of one second.
   // There is no point in hammering it with data requests.
   delay(1000);
+}
+
+void printResults() {
+  Serial.print("AQI ");
+  Serial.print(hpm.getAQI());
+  Serial.print("  PM 1.0 = ");
+  Serial.print(hpm.getPM1());
+  Serial.print(", PM 2.5 = ");
+  Serial.print(hpm.getPM25());
+  Serial.print(", PM 4.0 = ");
+  Serial.print(hpm.getPM4());
+  Serial.print(", PM 10.0 = ");
+  Serial.println(hpm.getPM10());
 }
 
 #endif

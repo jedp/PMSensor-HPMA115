@@ -24,6 +24,9 @@ if (hpm.checkAutoReceive() == NEW_DATA) {
 - `checkAutoReceive()` Poll for new sensor data. Do this no more than once per
   second.
 
+- `readParticleMeasurementResults()` Read the current sensor results. This
+  is an alternative to using auto-send and polling with `checkAutoReceive()`.
+
 - `getAQI()` Get the current Air Quality Index value.
 
 - `getPM1()` Get the current PM 1.0 quantity.
@@ -47,13 +50,16 @@ if (hpm.checkAutoReceive() == NEW_DATA) {
 When the HPM cold starts, it will automatically begin collecting readings and
 sending them every second.
 
-## Example
+## Examples
 
 See `main.cc` for a working example that streams AQI data over your serial
 console.
 
-Here are the guts of an example Arduino sketch to receive data from the HPMA115
-Compact sensor:
+Here are the guts of two example Arduino sketches to read data from
+the HPMA115 Compact sensor. The first waits for the sensor to send data
+automatically. The second reads it directly.
+
+### Receiving auto-send data
 
 ```C++
 #include <Arduino.h>
@@ -78,8 +84,10 @@ void setup() {
   hpm.begin(&hpmSerial);
 }
 
+// In the loop, we can just poll for new data since the device automatically
+// enters auto-send mode on startup.
 void loop() {
-  if (hpm.receive() == NEW_DATA) {
+  if (hpm.checkAutoReceive() == NEW_DATA) {
     Serial.print("AQI: ");
     Serial.print(hpm.getAQI());
     Serial.print("  PM 2.5 = ");
@@ -90,6 +98,46 @@ void loop() {
 
   // The physical sensor only sends data once per second.
   delay(1000);
+}
+```
+
+### Reading data without auto-send
+
+Same results, different approach.
+
+```C++
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+#include <HPMA115_Compact.h>
+
+SoftwareSerial hpmSerial(2, 3);
+HPMA115_Compact hpm = HPMA115_Compact();
+unsigned long lastCheck = 0;
+
+void setup() {
+  Serial.begin(HPMA115_BAUD);
+  hpmSerial.begin(HPMA115_BAUD);
+
+  hpm.begin(&hpmSerial);
+
+  // One way to wait for the device to be ready.
+  while(hpm.checkAutoReceive() != NEW_DATA) {}
+
+  hpm.stopAutoSend();
+}
+
+void loop() {
+
+  // It still takes the device 1 second to update its readings, so there's
+  // no point in hammering on this function call any more than once per
+  // second. All you will do is burn CPU.
+  if (millis() - lastCheck > 1000) {
+    lastCheck = mills();
+
+    if (hpm.readParticleMeasurementResults()) {
+      // Can now hpm.getAQI() etc.
+    }
+  }
 }
 ```
 
