@@ -1,8 +1,8 @@
 #include <unity.h>
 
 #include "aqi/aqi.h"
-#include "hpm/HPMA115_Compact.h"
 #include "fake/FakeStream.h"
+#include "HPMA115_Compact.h"
 
 void test_read_measurement() {
   HPMA115_Compact hpm = HPMA115_Compact();

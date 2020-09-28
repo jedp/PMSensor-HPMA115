@@ -1,5 +1,5 @@
-#ifndef INCLUDE_FAKE_FAKESTREAM_H_
-#define INCLUDE_FAKE_FAKESTREAM_H_
+#ifndef SRC_FAKE_FAKESTREAM_H_
+#define SRC_FAKE_FAKESTREAM_H_
 
 #include <stdint.h>
 
@@ -29,5 +29,5 @@ class Stream {
   uint8_t rx_end = 0;
 };
 
-#endif  // INCLUDE_FAKE_FAKESTREAM_H_
+#endif  // SRC_FAKE_FAKESTREAM_H_
 

@@ -1,13 +1,13 @@
 #include <unity.h>
 
 #include "aqi/aqi.h"
-#include "hpm/HPMA115_Compact.h"
 #include "fake/FakeStream.h"
+#include "HPMA115_Compact.h"
 
 void test_stream_unavailable(void) {
   HPMA115_Compact hpm = HPMA115_Compact();
 
-  TEST_ASSERT_EQUAL(DEVICE_UNAVAILABLE, hpm.checkAutoReceive());
+  TEST_ASSERT_FALSE(hpm.isNewDataAvailable());
 }
 
 void test_stream_has_no_data(void) {
@@ -15,7 +15,7 @@ void test_stream_has_no_data(void) {
   Stream fakeStream;
   hpm.begin(&fakeStream);
 
-  TEST_ASSERT_EQUAL(NO_DATA, hpm.checkAutoReceive());
+  TEST_ASSERT_FALSE(hpm.isNewDataAvailable());
 }
 
 void test_retry_to_read_head0(void) {
@@ -24,7 +24,7 @@ void test_retry_to_read_head0(void) {
   hpm.begin(&fakeStream);
 
   fakeStream.add(0x01);
-  TEST_ASSERT_EQUAL(NOT_HEAD0_RETRY, hpm.checkAutoReceive());
+  TEST_ASSERT_FALSE(hpm.isNewDataAvailable());
 }
 
 void test_retry_to_read_head1(void) {
@@ -34,7 +34,7 @@ void test_retry_to_read_head1(void) {
 
   fakeStream.add(0x42);  // The correct HEAD0 byte.
   fakeStream.add(0x01);  // Not the HEAD1 byte.
-  TEST_ASSERT_EQUAL(NOT_HEAD1_RETRY, hpm.checkAutoReceive());
+  TEST_ASSERT_FALSE(hpm.isNewDataAvailable());
 }
 
 void test_insufficient_data() {
@@ -45,7 +45,7 @@ void test_insufficient_data() {
   fakeStream.add(0x42);  // The correct HEAD0 byte.
   fakeStream.add(0x4D);  // the correct HEAD1 byte.
   fakeStream.add(0x01);  // Not enough data bytes.
-  TEST_ASSERT_EQUAL(INSUFFICIENT_DATA, hpm.checkAutoReceive());
+  TEST_ASSERT_FALSE(hpm.isNewDataAvailable());
 }
 
 void test_bad_checksum(void) {
@@ -89,7 +89,7 @@ void test_bad_checksum(void) {
   fakeStream.add(0xFF);  // Bogus high checksum byte.
   fakeStream.add(0xFF);  // Bogus low checksum byte.
 
-  TEST_ASSERT_EQUAL(BAD_CHECKSUM, hpm.checkAutoReceive());
+  TEST_ASSERT_FALSE(hpm.isNewDataAvailable());
 }
 
 void test_valid_checksum(void) {
@@ -133,7 +133,7 @@ void test_valid_checksum(void) {
   fakeStream.add(0x02);  // Valid checksum high.
   fakeStream.add(0x41);  // Valid checksum low.
 
-  TEST_ASSERT_EQUAL(NEW_DATA, hpm.checkAutoReceive());
+  TEST_ASSERT_TRUE(hpm.isNewDataAvailable());
 }
 
 void test_valid_data(void) {
@@ -177,7 +177,7 @@ void test_valid_data(void) {
   fakeStream.add(0x02);  // Valid checksum high.
   fakeStream.add(0x41);  // Valid checksum low.
 
-  TEST_ASSERT_EQUAL(NEW_DATA, hpm.checkAutoReceive());
+  TEST_ASSERT_TRUE(hpm.isNewDataAvailable());
   TEST_ASSERT_EQUAL(static_cast<uint16_t> (0x04 << 8) + 0x05, hpm.getPM1());
   TEST_ASSERT_EQUAL(static_cast<uint16_t> (0x06 << 8) + 0x07, hpm.getPM25());
   TEST_ASSERT_EQUAL(static_cast<uint16_t> (0x08 << 8) + 0x09, hpm.getPM4());
@@ -225,7 +225,7 @@ void test_aqi_when_pm25_higher(void) {
   fakeStream.add(0x02);  // Valid checksum high.
   fakeStream.add(0x2D);  // Valid checksum low.
 
-  TEST_ASSERT_EQUAL(NEW_DATA, hpm.checkAutoReceive());
+  TEST_ASSERT_TRUE(hpm.isNewDataAvailable());
   TEST_ASSERT_EQUAL(
       aqi_pm25(static_cast<uint16_t> (0x06 << 8) + 0x07),
       hpm.getAQI());
@@ -272,7 +272,7 @@ void test_aqi_when_pm10_higher(void) {
   fakeStream.add(0x02);  // Valid checksum high.
   fakeStream.add(0x2C);  // Valid checksum low.
 
-  TEST_ASSERT_EQUAL(NEW_DATA, hpm.checkAutoReceive());
+  TEST_ASSERT_TRUE(hpm.isNewDataAvailable());
   TEST_ASSERT_EQUAL(
       aqi_pm10(static_cast<uint16_t> (0x01 << 8) + 0x0B),
       hpm.getAQI());

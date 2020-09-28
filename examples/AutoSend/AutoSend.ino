@@ -1,15 +1,9 @@
-#ifndef UNIT_TEST
-
-#include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <HPMA115_Compact.h>
 
-// Uncomment and/or change for Arduino uno
-// #define UART_TX 2
-// #define UART_RX 3
-// Uncomment and/or change for STM32 Nucleo
-#define UART_TX PB4
-#define UART_RX PB3
+// Possible pins for connecting to the HPM.
+#define UART_TX 2
+#define UART_RX 3
 
 // A channel for interacting with the sensor.
 SoftwareSerial hpmSerial(UART_TX, UART_RX);
@@ -72,6 +66,4 @@ void printResults() {
   Serial.print(", PM 10.0 = ");
   Serial.println(hpm.getPM10());
 }
-
-#endif
 
