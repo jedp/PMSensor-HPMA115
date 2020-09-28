@@ -33,9 +33,33 @@ void Stream::write(uint8_t from[], uint8_t len) {
     if (rx_buf[rx_idx++] == 0x01) {
       uint8_t cmd = rx_buf[rx_idx++];
 
+      // Stop measurement
+      if (cmd == 0x02) {
+        // Checksum. See datasheet, Table 6, for expected values.
+        if (rx_buf[rx_idx++] == 0x95) {
+          add(0xA5); add(0xA5);
+          return;
+        } else {
+          add(0x96); add(0x96);
+          return;
+        }
+      }
+
+      // Start measurement
+      if (cmd == 0x01) {
+        // Checksum. See datasheet, Table 6, for expected values.
+        if (rx_buf[rx_idx++] == 0x96) {
+          add(0xA5); add(0xA5);
+          return;
+        } else {
+          add(0x96); add(0x96);
+          return;
+        }
+      }
+
       // Stop auto-send
       if (cmd == 0x20) {
-        // Checksum
+        // Checksum. See datasheet, Table 6, for expected values.
         if (rx_buf[rx_idx++] == 0x77) {
           add(0xA5); add(0xA5);
           return;
@@ -47,7 +71,7 @@ void Stream::write(uint8_t from[], uint8_t len) {
 
       // Start auto-send
       if (cmd == 0x40) {
-        // Checksum
+        // Checksum. See datasheet, Table 6, for expected values.
         if (rx_buf[rx_idx++] == 0x57) {
           add(0xA5); add(0xA5);
           return;

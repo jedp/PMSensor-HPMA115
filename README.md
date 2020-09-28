@@ -19,7 +19,35 @@ if (hpm.checkAutoReceive() == NEW_DATA) {
 
 ```
 
-## Usage
+## Commands
+
+- `checkAutoReceive()` Poll for new sensor data. Do this no more than once per
+  second.
+
+- `getAQI()` Get the current Air Quality Index value.
+
+- `getPM1()` Get the current PM 1.0 quantity.
+
+- `getPM25()` Get the current PM 2.5 quantity.
+
+- `getPM4()` Get the current PM 4 quantiy.
+
+- `getPM10()` Get the current PM 10 quantity
+
+- `stopParticleMeasurement()` Stop the HPM device from collecting readings.
+  (Also switches off the fan.)
+
+- `startParticleMeasurement()` Start collecting readings.
+
+- `stopAutoSend()` Stop the HPM from automatically sending readings every
+  second.
+
+- `startAutoSend()` Start sending autoatic readings.
+
+When the HPM cold starts, it will automatically begin collecting readings and
+sending them every second.
+
+## Example
 
 See `main.cc` for a working example that streams AQI data over your serial
 console.

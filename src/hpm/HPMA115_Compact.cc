@@ -1,3 +1,5 @@
+#include <stdio.h>
+#include <string.h>
 #include "hpm/HPMA115_Compact.h"
 #include "aqi/aqi.h"
 
@@ -85,26 +87,37 @@ compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
   return NEW_DATA;
 }
 
+bool HPMA115_Compact::stopParticleMeasurement() {
+  // Data sheet, Table 6.
+  return writeSimpleCommand(0x02);
+}
+
+bool HPMA115_Compact::startParticleMeasurement() {
+  // Data sheet, Table 6.
+  return writeSimpleCommand(0x01);
+}
+
 bool HPMA115_Compact::stopAutoSend() {
-  // Data Shee, Table 6.
-  uint8_t cmd[] = { 0x68, 0x01, 0x20, 0x77 };
-  hpma->write(cmd, 4);
-
-  // Block until we get a response.
-  while (hpma->available() < 2) {}
-  uint8_t resp[2];
-  hpma->readBytes(resp, 2);
-
-  if (resp[0] == 0xA5 && resp[1] == 0xA5) {
-    return true;
-  }
-
-  return false;
+  // Data sheet, Table 6.
+  return writeSimpleCommand(0x20);
 }
 
 bool HPMA115_Compact::startAutoSend() {
-  // Data Shee, Table 6.
-  uint8_t cmd[] = { 0x68, 0x01, 0x40, 0x57 };
+  // Data sheet, Table 6.
+  return writeSimpleCommand(0x40);
+}
+
+bool HPMA115_Compact::writeSimpleCommand(uint8_t cmdByte) {
+  uint8_t cmd[4];
+
+  // Data sheet, Table 6.
+  cmd[0] = 0x68;
+  cmd[1] = 0x01;  // Length is guaranteed to be one.
+  cmd[2] = cmdByte;
+  cmd[3] = (0x10000 - (cmd[0] + cmd[1] + cmd[2]) % 256);
+
+  printf("for cmd %02X cs is %02X\n", cmdByte, cmd[3]);
+
   hpma->write(cmd, 4);
 
   // Block until we get a response.

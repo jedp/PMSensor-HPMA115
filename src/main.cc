@@ -28,6 +28,8 @@ void setup() {
   // Configure the HPM device to use our data stream.
   // (Note carefully the '&' in the next line.)
   hpm.begin(&hpmSerial);
+
+  delay(1000);
 }
 
 void loop() {
