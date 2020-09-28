@@ -85,3 +85,37 @@ compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
   return NEW_DATA;
 }
 
+bool HPMA115_Compact::stopAutoSend() {
+  // Data Shee, Table 6.
+  uint8_t cmd[] = { 0x68, 0x01, 0x20, 0x77 };
+  hpma->write(cmd, 4);
+
+  // Block until we get a response.
+  while (hpma->available() < 2) {}
+  uint8_t resp[2];
+  hpma->readBytes(resp, 2);
+
+  if (resp[0] == 0xA5 && resp[1] == 0xA5) {
+    return true;
+  }
+
+  return false;
+}
+
+bool HPMA115_Compact::startAutoSend() {
+  // Data Shee, Table 6.
+  uint8_t cmd[] = { 0x68, 0x01, 0x40, 0x57 };
+  hpma->write(cmd, 4);
+
+  // Block until we get a response.
+  while (hpma->available() < 2) {}
+  uint8_t resp[2];
+  hpma->readBytes(resp, 2);
+
+  if (resp[0] == 0xA5 && resp[1] == 0xA5) {
+    return true;
+  }
+
+  return false;
+}
+

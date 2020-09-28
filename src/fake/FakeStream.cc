@@ -5,25 +5,68 @@ Stream::Stream() {
 }
 
 int Stream::available() {
-  return end - idx;
+  return tx_end - tx_idx;
 }
 
 int Stream::peek() {
-  return buf[idx];
+  return tx_buf[tx_idx];
 }
 
 int Stream::read() {
-  return buf[idx++];
+  return tx_buf[tx_idx++];
 }
 
-void Stream::readBytes(uint8_t to[], uint8_t num_bytes) {
-  for (uint8_t i = 0; i < num_bytes; ++i) {
-    to[i] = buf[idx + i];
+void Stream::readBytes(uint8_t to[], uint8_t len) {
+  for (uint8_t i = 0; i < len; ++i) {
+    to[i] = tx_buf[tx_idx + i];
   }
-  idx += num_bytes;
+  tx_idx += len;
+}
+
+void Stream::write(uint8_t from[], uint8_t len) {
+  for (uint8_t i = 0; i < len; ++i) {
+    rx_buf[rx_end++] = from[i];
+  }
+
+  // Respond to commands.
+  if (rx_buf[rx_idx++] == 0x68) {
+    if (rx_buf[rx_idx++] == 0x01) {
+      uint8_t cmd = rx_buf[rx_idx++];
+
+      // Stop auto-send
+      if (cmd == 0x20) {
+        // Checksum
+        if (rx_buf[rx_idx++] == 0x77) {
+          add(0xA5); add(0xA5);
+          return;
+        } else {
+          add(0x96); add(0x96);
+          return;
+        }
+      }
+
+      // Start auto-send
+      if (cmd == 0x40) {
+        // Checksum
+        if (rx_buf[rx_idx++] == 0x57) {
+          add(0xA5); add(0xA5);
+          return;
+        } else {
+          add(0x96); add(0x96);
+          return;
+        }
+      }
+    }
+  }
+
+  assert(0);  // We didn't understand the input. Abort.
 }
 
 void Stream::add(uint8_t byte) {
-  buf[end++] = byte;
+  tx_buf[tx_end++] = byte;
+}
+
+uint8_t Stream::take() {
+  return rx_buf[rx_idx++];
 }
 

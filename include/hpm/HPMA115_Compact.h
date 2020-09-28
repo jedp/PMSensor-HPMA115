@@ -71,6 +71,22 @@ class HPMA115_Compact {
    */
   compact_auto_status_t checkAutoReceive();
 
+  /*
+   * Stop the HPM from automatically sending results.
+   *
+   * Blocks until HPM responds with success code. Returns true on success,
+   * false otherwise.
+   */
+  bool stopAutoSend();
+
+  /*
+   * Tell the HPM to start sending results automatically.
+   *
+   * Blocks until HPM responds with success code. Returns true on success,
+   * false otherwise.
+   */
+  bool startAutoSend();
+
   /* Get the most recent PM 1.0 reading. */
   uint16_t getPM1();
 
