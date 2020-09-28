@@ -9,16 +9,15 @@
  * Prestissimo    = Unhealthy
  */
 
-#ifndef UNIT_TEST
-
-#include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <HPMA115_Compact.h>
 
-// STM32 Nucleo pinout
-#define UART_TX PB6
-#define UART_RX PB7
-#define LED     PB3
+// Possible pins for connecting to the HPM.
+#define UART_TX 2
+#define UART_RX 3
+
+// The default Arduno LED pin
+#define LED 13
 
 // A channel for interacting with the sensor.
 SoftwareSerial hpmSerial(UART_TX, UART_RX);
@@ -27,17 +26,18 @@ SoftwareSerial hpmSerial(UART_TX, UART_RX);
 // A "standard" and a "compact". They return different auto-read data messages.
 HPMA115_Compact hpm = HPMA115_Compact();
 
-uint32_t lastBlink = 0;
-uint32_t lastCheck = 0;
-uint32_t blinkIntervalMS;
-uint32_t checkIntervalMS = 1000;
-uint32_t calculateBlinkIntervalMS(uint16_t aqi);
+unsigned long lastBlink = 0;
+unsigned long lastCheck = 0;
+unsigned long blinkIntervalMS;
+unsigned long checkIntervalMS = 1000;
+unsigned long calculateBlinkIntervalMS(uint16_t aqi);
 
 void setup() {
+  Serial.begin(HPMA115_BAUD);
   hpmSerial.begin(HPMA115_BAUD);
 
-  pinMode(LED, OUTPUT);
-  digitalWrite(LED, LOW);
+  pinSetup(LED, OUTPUT);
+  digitalWrite(LOW, LED);
 
   // Configure the HPM device to use our data stream.
   // (Note carefully the '&' in the next line.)
@@ -48,10 +48,11 @@ void setup() {
   // When the device powers up, it goes directly into auto-send mode.
   while (!hpm.isNewDataAvailable()) {}
 
-  blinkIntervalMS = calculateBlinkIntervalMS(hpm.getAQI());
+  blinkInterval = calculateBlinkInterval(hpm.getAQI());
 }
 
 void loop() {
+
   if ((millis() - lastBlink) > blinkIntervalMS) {
     lastBlink = millis();
     digitalWrite(LED, HIGH);
@@ -68,9 +69,7 @@ void loop() {
   }
 }
 
-uint32_t calculateBlinkIntervalMS(uint16_t aqi) {
+unsigned long calculateBlinkIntervalMS(uint16_t aqi) {
   return 1000 * aqi / 60;
 }
-
-#endif
 
