@@ -5,19 +5,25 @@ Stream::Stream() {
 }
 
 int Stream::available() {
-  assert(0);  // TODO(jed) for next tests
+  return end - idx;
 }
 
 int Stream::peek() {
-  assert(0);  // TODO(jed) for next tests
+  return buf[idx];
 }
 
 int Stream::read() {
-  assert(0);  // TODO(jed) for next tests
+  return buf[idx++];
 }
 
-void Stream::readBytes(uint8_t *to, uint8_t len) {
-  assert(0);  // TODO(jed) for next tests
+void Stream::readBytes(uint8_t to[], uint8_t num_bytes) {
+  for (uint8_t i = 0; i < num_bytes; ++i) {
+    to[i] = buf[idx + i];
+  }
+  idx += num_bytes;
 }
 
+void Stream::add(uint8_t byte) {
+  buf[end++] = byte;
+}
 

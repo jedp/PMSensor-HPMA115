@@ -59,8 +59,8 @@ compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
 
   // Compute the checksum. This *does* include the header bytes, so start
   // by adding those.
-  uint16_t expected_sum = (buf[CS_H] << 8) + buf[CS_L];
-  uint16_t actual_sum = AUTO_HEAD_0 + AUTO_HEAD_1;
+  uint32_t expected_sum = (buf[CS_H] << 8) + buf[CS_L];
+  uint32_t actual_sum = AUTO_HEAD_0 + AUTO_HEAD_1;
   for (uint8_t i = 0; i < CS_H; ++i) {
     actual_sum += buf[i];
   }
@@ -68,7 +68,6 @@ compact_auto_status_t HPMA115_Compact::checkAutoReceive() {
   if (actual_sum != expected_sum) {
     return BAD_CHECKSUM;
   }
-  result_data.checksum = actual_sum;
 
   // Everything's great. We can report the readings.
   result_data.pm1  = (buf[DATA0_H] << 8) + buf[DATA0_L];
