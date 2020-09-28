@@ -66,10 +66,34 @@ class HPMA115_Compact {
   /*
    * Check for data received. Return status code.
    *
+   * When it powers on, the HPM automatically starts collecting measurements
+   * and sending them every second (auto send). Calling this command every
+   * second will let you capture that stream of readings.
+   *
    * If this returns NEW_DATA, then you can access the new data by calling
    * the getPM25() or  getAQI(), etc.
    */
   compact_auto_status_t checkAutoReceive();
+
+  /*
+   * Tell the HPM to stop collecting measurements. This will also cause the
+   * HPM fan to stop.
+   *
+   * Blocks until HPM responds with success code. Returns true on success,
+   * false otherwise.
+   */
+  bool stopParticleMeasurement();
+
+  /*
+   * Tell the HPM to begin measureing particles.
+   *
+   * When it powers on, the HPM automatically starts collecting measurements
+   * and sending them every second (auto send).
+   *
+   * Blocks until HPM responds with success code. Returns true on success,
+   * false otherwise.
+   */
+  bool startParticleMeasurement();
 
   /*
    * Stop the HPM from automatically sending results.
@@ -81,6 +105,9 @@ class HPMA115_Compact {
 
   /*
    * Tell the HPM to start sending results automatically.
+   *
+   * When it powers on, the HPM will automatically enter auto-send mode
+   * on its own.
    *
    * Blocks until HPM responds with success code. Returns true on success,
    * false otherwise.
@@ -112,6 +139,12 @@ class HPMA115_Compact {
 
   /* Latest readings. */
   compact_auto_result_t result_data = { 0xFF };
+
+  /*
+   * Write a command and block until the HPM responds with a success code.
+   * Return true for success, false otherwise.
+   */
+  bool writeSimpleCommand(uint8_t cmdByte);
 };
 
 #endif  // INCLUDE_HPM_HPMA115_COMPACT_H_

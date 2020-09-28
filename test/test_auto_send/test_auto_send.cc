@@ -294,6 +294,22 @@ void test_start_auto_send() {
   TEST_ASSERT_TRUE(hpm.startAutoSend());
 }
 
+void test_stop_measurement() {
+  HPMA115_Compact hpm = HPMA115_Compact();
+  Stream fakeStream;
+  hpm.begin(&fakeStream);
+
+  TEST_ASSERT_TRUE(hpm.stopParticleMeasurement());
+}
+
+void test_start_measurement() {
+  HPMA115_Compact hpm = HPMA115_Compact();
+  Stream fakeStream;
+  hpm.begin(&fakeStream);
+
+  TEST_ASSERT_TRUE(hpm.startParticleMeasurement());
+}
+
 int main(int argc, char** argv) {
   UNITY_BEGIN();
 
@@ -308,6 +324,8 @@ int main(int argc, char** argv) {
   test_aqi_when_pm10_higher();
   test_stop_auto_send();
   test_start_auto_send();
+  test_stop_measurement();
+  test_start_measurement();
 
   UNITY_END();
 }
