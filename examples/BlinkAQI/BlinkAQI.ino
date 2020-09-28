@@ -36,7 +36,7 @@ void setup() {
   Serial.begin(HPMA115_BAUD);
   hpmSerial.begin(HPMA115_BAUD);
 
-  pinSetup(LED, OUTPUT);
+  pinMode(LED, OUTPUT);
   digitalWrite(LOW, LED);
 
   // Configure the HPM device to use our data stream.
@@ -48,7 +48,7 @@ void setup() {
   // When the device powers up, it goes directly into auto-send mode.
   while (!hpm.isNewDataAvailable()) {}
 
-  blinkInterval = calculateBlinkInterval(hpm.getAQI());
+  blinkIntervalMS = calculateBlinkIntervalMS(hpm.getAQI());
 }
 
 void loop() {
