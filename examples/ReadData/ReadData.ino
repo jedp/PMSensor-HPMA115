@@ -15,6 +15,11 @@ HPMA115_Compact hpm = HPMA115_Compact();
 // Helper function to print current measurement results.
 void printResults();
 
+// Timestamp for last time we checked the sensor reading.
+// We will use this to avoid requesting data faster than the sensor can
+// provide it, which is one reading per second.
+unsigned long lastCheck = 0;
+
 void setup() {
   Serial.begin(HPMA115_BAUD);
   hpmSerial.begin(HPMA115_BAUD);
@@ -24,12 +29,23 @@ void setup() {
   hpm.begin(&hpmSerial);
 
   delay(1000);
+
+  // When the device powers up, it goes directly into auto-send mode.
+  while (!hpm.isNewDataAvailable()) {}
+
+  // Disabling auto-send. We will check results manually.
+  hpm.stopAutoSend();
 }
 
 void loop() {
-  if (hpm.isNewDataAvailable()) {
-    // No error, so the data was updated automatically for us. Yay.
-    printResults();
+
+  // Only ask for a new reading if a second has elapsed.
+  if (millis() - lastCheck > 1000) {
+    lastCheck = millis();
+
+    if (hpm.readParticleMeasurementResults()) {
+      printResults();
+    }
   }
 
   // The sensor only sends readings at intervals of one second.
