@@ -61,6 +61,9 @@ class HPMA115_Compact {
    * and sending them every second (auto send). Calling this command every
    * second will let you capture that stream of readings.
    *
+   * This command takes on the order of 70 microseconds to execute.
+   * It's pretty fast, because it's plucking ready data off the UART.
+   *
    * If this returns true, then you can access the new data by calling
    * the getPM25() or  getAQI(), etc.
    */
@@ -71,6 +74,11 @@ class HPMA115_Compact {
    *
    * Blocks until the HPM responds either with an error code, or with the
    * result data.
+   *
+   * Note that this command takes on the order of 25 milliseconds to
+   * complete. That could be a huge amount of time to be blocking your
+   * microcontroller from doing anything else. You may wish to consider
+   * using auto-send and `isNewDataAvailable()` if this is problematic.
    *
    * As an alternative to requesting data this way, you can leave the device
    * in auto-send mode, and call isNewDataAvailable() every second.

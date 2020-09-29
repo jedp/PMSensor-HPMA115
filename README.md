@@ -9,7 +9,7 @@ Includes calculation of AQI (air quality index).
 
 tl;dr:
 
-```
+```C++
 HPMA115_Compact hpm = HPMA115_Compact();
 hpm.begin(&serial);
 
@@ -26,6 +26,7 @@ if (hpm.isNewDataAvailable()) {
 
 - `readParticleMeasurementResults()` Read the current sensor results. This
   is an alternative to using auto-send and polling with `isNewDataAvailable()`.
+  (But see the note on Efficiency below.)
 
 - `getAQI()` Get the current Air Quality Index value.
 
@@ -142,9 +143,25 @@ void loop() {
 }
 ```
 
-## Wiring
+### A Note about Efficiency
 
-Consult Table 3 of the datasheet for the [HPM Sensors].
+The HPM API offers two different approaches for collecting the current reading,
+direct readings (`readParticleMeasurementResults()`) and auto-send
+(`isNewDataAvailable()`). The former may be more intiutive -- it feels so like
+a simple assignment, `x = y` -- but it comes at a huge cost.
+
+On my setup, it takes about 25 milliseconds to execute
+`readParticleMeasurementResults()`; that's 25ms during which your program will
+be frozen while waiting for data. It takes so long because the command sends
+data to the HPM and then sits and waits for the HPM to post a response back on
+the UART. Depending on your application, that could be quite noticeable.
+
+With the auto-send approach, by contrast, it takes only 70 microseconds to
+execute `isNewDataAvailable()`. That's 350 times faster! It's fast because it
+is capturing data that's already sitting there on the serial bus, waiting to be
+picked up. There is no laggy back-and-forth between your program and the HPM.
+So if performance matters, you will want to find a way to use the auto-send
+approach.
 
 ## Platform.IO Commands
 
@@ -155,30 +172,10 @@ If you are not using Platform.IO, ignore this part.
 
 ### Build and upload
 
-Using one of the platforms specified in the `platformio.ini` file, run, e.g.,
+Using one of the boards specified in the `platformio.ini` file, run, e.g.,
 
 ```
 pio run -e nucleo_f303k8 --target upload
-```
-
-### Printing AQI to the console
-
-(If you are using the Arduino editor, and not PIO command-line tools, just open
-the serial window in the Arduio editor, set Baud to 9600, and you should be
-able to see the same output.)
-
-```
-pio run -e nucleo_f303k8 --target upload
-pio device monitor
-```
-
-This will stream the current AQI together with the particle readings. Example:
-
-```
-AQI 29  PM 1.0 = 4, PM 2.5 = 7, PM 4.0 = 9, PM 10.0 = 11
-AQI 29  PM 1.0 = 5, PM 2.5 = 7, PM 4.0 = 9, PM 10.0 = 11
-AQI 29  PM 1.0 = 5, PM 2.5 = 7, PM 4.0 = 10, PM 10.0 = 11
-...
 ```
 
 ### Testing
@@ -200,9 +197,21 @@ Run unit tests with:
   Compact. Senses PM1.0, 2.5, 4.0, and 10. Air intake and exhaust
   are on opposite sides of the device.
 
+## Wiring
+
+Consult Table 3 of the datasheet for the [HPM Sensors].
+
+Note that the data sheet specifies the part number for the actul wiring
+assemblies you need in Figure 3 and Figure 4.
+
+For the compact sensor, I recommend ordering:
+
+- [The wiring assembly](https://www.digikey.com/product-detail/en/samtec-inc/SFSD-05-28-H-05.00-SR/SAM8662-ND/1785913)
+- [Breadboard-friendly terminal blocks](https://www.digikey.com/product-detail/en/phoenix-contact/1990083/277-1802-ND/950930) to connect the wires.
+
 ## To-Do
 
-- Finish implementing the API (synchronous commands)
+- Finish implementing the API (set/read adjustment)
 - Support for non-compact HPM "Standard"
 
 ## About
