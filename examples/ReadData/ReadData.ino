@@ -1,11 +1,26 @@
+/*
+ * Prints readings like these to the Serial console:
+ *
+ * AQI 56  PM 1.0 = 16, PM 2.5 = 18, PM 4.0 = 21, PM 10.0 = 21
+ * AQI 55  PM 1.0 = 15, PM 2.5 = 17, PM 4.0 = 20, PM 10.0 = 20
+ * AQI 54  PM 1.0 = 14, PM 2.5 = 16, PM 4.0 = 18, PM 10.0 = 18
+ * etc.
+ *
+ * This example uses the SoftwareSerial interface because the Arduino Uno
+ * has only one hardware UART. If you have a board with a second hardware
+ * serial, consider using it instead for the hpmSerial UART, because it
+ * will be more efficient.
+ */
 #include <SoftwareSerial.h>
 #include <HPMA115_Compact.h>
 
 // Possible pins for connecting to the HPM.
-#define UART_TX 2
-#define UART_RX 3
+#define UART_TX 2  // to HPM Compact pin 9
+#define UART_RX 3  // to HPM Compact pin 7
 
 // A channel for interacting with the sensor.
+// For boards that have multiple hardware serial UARTs, consider
+// making this a hardware serial.
 SoftwareSerial hpmSerial(UART_TX, UART_RX);
 
 // Remember that there are two varieties of the Honeywell HPM115:
@@ -31,7 +46,10 @@ void setup() {
   delay(1000);
 
   // When the device powers up, it goes directly into auto-send mode.
-  while (!hpm.isNewDataAvailable()) {}
+  while (!hpm.isNewDataAvailable()) {
+    // Still waking up?
+    delay(1000);
+  }
 
   // Disabling auto-send. We will check results manually.
   hpm.stopAutoSend();
