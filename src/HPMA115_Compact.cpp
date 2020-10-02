@@ -40,8 +40,16 @@ bool HPMA115_Compact::isNewDataAvailable() {
     return false;
   }
 
-  if (hpma->read() != AUTO_HEAD_0) {
-    // Not at the head of a protocol block. Skip to next byte.
+  // Read ahead as much as possible, stopping at the header byte.
+  bool found_head = false;
+  for (uint8_t i = 0; i < hpma->available(); ++i) {
+    if (hpma->read() == AUTO_HEAD_0) {
+      found_head = true;
+      break;
+    }
+  }
+
+  if (!found_head) {
     return false;
   }
 
