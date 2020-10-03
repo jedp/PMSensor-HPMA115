@@ -64,7 +64,7 @@ bool HPMA115_Compact::isNewDataAvailable() {
 
   // We've already consumed the header bytes, so 30 remain in the message.
   uint8_t buf[AUTO_SEND_DATA_BYTES] = {};
-  hpma->readBytes(buf, AUTO_SEND_DATA_BYTES);
+  hpma->readBytes(buf, sizeof(buf));
 
   // Compute the checksum. This *does* include the header bytes, so start
   // by adding those.
@@ -128,7 +128,7 @@ bool HPMA115_Compact::readParticleMeasurementResults() {
   // but otherwise ignore them.
   while (hpma->available() < 12) {}
   uint8_t buf[12] = { 0 };
-  hpma->readBytes(buf, 12);
+  hpma->readBytes(buf, sizeof(buf));
 
   while (hpma->available() < 1) {}
   uint32_t expected_sum = hpma->read();
@@ -196,7 +196,7 @@ bool HPMA115_Compact::writeSimpleCommand(uint8_t cmdByte) {
   // Block until we get a response.
   while (hpma->available() < 2) {}
   uint8_t resp[2];
-  hpma->readBytes(resp, 2);
+  hpma->readBytes(resp, sizeof(resp));
 
   if (resp[0] == 0xA5 && resp[1] == 0xA5) {
     return true;
