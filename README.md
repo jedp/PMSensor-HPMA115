@@ -19,6 +19,22 @@ if (hpm.isNewDataAvailable()) {
 
 ```
 
+## Using the Library
+
+This library is available via the Arduino Library Manager. To make it part of
+your library collection, simply do the following in the Arduino sketch editor:
+
+- Select **Sketch** &#8594; **Include Library** &#8594; **Manage Libraries ...**
+- In the Library Manager, search for HPM or AQI and the library will be listed.
+- Tap the **Install** button.
+
+Now for your sketch you can select **Sketch** &#8594; **Include Library** and
+find `PMSensor-HPMA115` under **Contributed libraries**
+
+You can also open and build the examples from **File** &#8594; **Examples** and
+then in the "Examples from Custom Libraries" section, choose
+**PMSensor-HPMA115** to open any of the examples.
+
 ## Commands
 
 - `isNewDataAvailable()` Poll for new sensor data. Do this no more than once
