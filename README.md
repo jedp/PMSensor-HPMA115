@@ -19,6 +19,12 @@ if (hpm.isNewDataAvailable()) {
 
 ```
 
+## Compatibility
+
+Please note that this code works with the "Compact" series of HPMA115 sensors.
+It will not work with the "Standard" series. I do not have a Standard module,
+but would be happy to collaborate with anyone who does.
+
 ## Using the Library
 
 This library is available via the Arduino Library Manager. To make it part of
